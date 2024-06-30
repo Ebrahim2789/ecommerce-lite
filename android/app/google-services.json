@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "986922103626",
+    "project_id": "mydalell-backend-project",
+    "storage_bucket": "mydalell-backend-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986922103626:android:266ae832f81de9838207b3",
+        "android_client_info": {
+          "package_name": "com.wahel.dalell"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDj6G8cKbZum-7RWpmH3RKmShYsqZiWE7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
