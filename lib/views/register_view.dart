@@ -35,7 +35,9 @@ class _RegisterViewState extends State<RegisterView> {
     WidgetsFlutterBinding.ensureInitialized();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(title: const Text('Register'),
+      backgroundColor: Colors.blue[500],
+      ),
       body: FutureBuilder(
           future: Firebase.initializeApp(
             options: DefaultFirebaseOptions.currentPlatform,
@@ -78,6 +80,8 @@ class _RegisterViewState extends State<RegisterView> {
                                     email: email, password: password);
 
                             devtools.log(userCredential.toString());
+
+                            Navigator.of(context).pushNamedAndRemoveUntil('/login', (route)=>false,);
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'weak-password') {
                               devtools.log('please dont do this weak password');

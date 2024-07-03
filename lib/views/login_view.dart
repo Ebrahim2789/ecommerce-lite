@@ -34,7 +34,9 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     WidgetsFlutterBinding.ensureInitialized;
     return Scaffold(
-        appBar: AppBar(title: const Text('Login')),
+        appBar: AppBar(title: const Text('Login'),
+        backgroundColor: Colors.blue[500],
+        ),
         body: FutureBuilder(
             future: Firebase.initializeApp(
                 options: DefaultFirebaseOptions.currentPlatform),

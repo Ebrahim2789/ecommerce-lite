@@ -1,4 +1,5 @@
 import 'package:dalell/firebase_options.dart';
+import 'package:dalell/views/drawer_demo.dart';
 import 'package:dalell/views/login_view.dart';
 import 'package:dalell/views/register_view.dart';
 import 'package:dalell/views/verify_email_view.dart';
@@ -20,6 +21,7 @@ void main() {
       // When navigating to the "/second" route, build the SecondScreen widget.
       '/register/': (context) => const RegisterView(),
       '/notes/': (context) => const MainPage(),
+      '/menu/':(context)=>const DrawerDemo(),
     },
   ));
 }
@@ -76,12 +78,24 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   Menu? selectedMenu;
+  String menuBar='Menu';
+    String selectedPage='';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+      //   leading:IconButton(icon: const Icon(Icons.menu),
+      //   tooltip: menuBar,onPressed: ()async{
+      // // final menu=  await DrawerDemo();\
+      //     // Navigator.of(context).pushNamedAndRemoveUntil('/menu/', (route)=>false, );
+   
+      
+      //   },),
         title: const Text('Main page'),
+
         backgroundColor: Colors.blue[500],
+        
+        
         actions: [
           PopupMenuButton<Menu>(
             initialValue: selectedMenu,
@@ -118,6 +132,8 @@ class _MainPageState extends State<MainPage> {
                   child: ListTile(
                       title: Text('Log out'),
                       leading: Icon(Icons.logout_outlined)),
+
+                      
                 ),
                 PopupMenuItem<Menu>(
                   value: Menu.preview,
@@ -160,7 +176,55 @@ class _MainPageState extends State<MainPage> {
           )
         ],
       ),
-      body: const Text('hello world'),
+
+drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Drawer Header',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.message),
+              title: const Text('Messages'),
+              onTap: () {
+                setState(() {
+                  selectedPage = 'Messages';
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_circle),
+              title: const Text('Profile'),
+              onTap: () {
+                setState(() {
+                  selectedPage = 'Profile';
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                setState(() {
+                  selectedPage = 'Settings';
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+
+      body: Text('Page: $selectedPage'),
     );
   }
 }
