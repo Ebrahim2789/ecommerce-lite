@@ -1,5 +1,5 @@
+import 'package:dalell/constants/routes.dart';
 import 'package:dalell/firebase_options.dart';
-import 'package:dalell/views/drawer_demo.dart';
 import 'package:dalell/views/login_view.dart';
 import 'package:dalell/views/register_view.dart';
 import 'package:dalell/views/verify_email_view.dart';
@@ -17,11 +17,11 @@ void main() {
     // initialRoute: '/',
     routes: {
       // When navigating to the "/" route, build the FirstScreen widget.
-      '/login/': (context) => const LoginView(),
+      loginRoute: (context) => const LoginView(),
       // When navigating to the "/second" route, build the SecondScreen widget.
-      '/register/': (context) => const RegisterView(),
-      '/notes/': (context) => const MainPage(),
-      '/menu/':(context)=>const DrawerDemo(),
+       registerRoute: (context) => const RegisterView(),
+      mainPageroute: (context) => const MainPage(),
+
     },
   ));
 }
@@ -110,7 +110,7 @@ class _MainPageState extends State<MainPage> {
 
                   if (showlogout) {
                     await FirebaseAuth.instance.signOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil('/login/', (_)=>false, );
+                    Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (_)=>false, );
                   }
                 case Menu.download:
                   break;
@@ -159,9 +159,10 @@ class _MainPageState extends State<MainPage> {
                 PopupMenuDivider(),
                 PopupMenuItem<Menu>(
                   value: Menu.remove,
-                  child: ListTile(
+                  child:  ListTile(
                     leading: Icon(Icons.delete_outline),
                     title: Text('Remove'),
+                    
                   ),
                 ),
                 PopupMenuItem<Menu>(

@@ -1,3 +1,4 @@
+import 'package:dalell/constants/routes.dart';
 import 'package:dalell/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -81,7 +82,7 @@ class _RegisterViewState extends State<RegisterView> {
 
                             devtools.log(userCredential.toString());
 
-                            Navigator.of(context).pushNamedAndRemoveUntil('/login', (route)=>false,);
+                            Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (route)=>false,);
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'weak-password') {
                               devtools.log('please dont do this weak password');
@@ -98,7 +99,7 @@ class _RegisterViewState extends State<RegisterView> {
                     TextButton(
                         onPressed: () {
                           Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/login/',
+                            loginRoute,
                             (route) => false,
                           );
                         },
