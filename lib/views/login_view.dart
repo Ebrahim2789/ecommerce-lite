@@ -2,7 +2,7 @@
 
 import 'package:dalell/constants/routes.dart';
 import 'package:dalell/firebase_options.dart';
-import 'package:dalell/uttility/show_error_dialog.dart';
+import 'package:dalell/utilities/show_error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
