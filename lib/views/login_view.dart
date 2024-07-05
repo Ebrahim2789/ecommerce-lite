@@ -1,8 +1,12 @@
+// import 'dart:ffi';
+
+import 'package:dalell/constants/routes.dart';
 import 'package:dalell/firebase_options.dart';
+import 'package:dalell/uttility/show_error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
+// import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -34,8 +38,9 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     WidgetsFlutterBinding.ensureInitialized;
     return Scaffold(
-        appBar: AppBar(title: const Text('Login'),
-        backgroundColor: Colors.blue[500],
+        appBar: AppBar(
+          title: const Text('Login'),
+          backgroundColor: Colors.blue[500],
         ),
         body: FutureBuilder(
             future: Firebase.initializeApp(
@@ -71,31 +76,31 @@ class _LoginViewState extends State<LoginView> {
                               // final userCredential =
                               await FirebaseAuth.instance
                                   .signInWithEmailAndPassword(
-                                      email: email, password: password
-                                      // email: "abre2789@gmail.com",
-                                      // password: "plmokn,./!"
-
-                                      );
+                                      email: email, password: password);
                               Navigator.of(context).pushNamedAndRemoveUntil(
-                                '/notes/',
+                                mainPageroute,
                                 (route) => false,
                               );
                             } on FirebaseAuthException catch (e) {
                               if (e.code == 'user-not-found') {
-                                devtools.log('No user found for that email.');
+                                await showErrorDialog(
+                                    context, 'user not found');
                               } else if (e.code == 'wrong-password') {
-                                devtools.log(
-                                    'Wrong password provided for that user.');
+                                await showErrorDialog(
+                                    context, 'Wrong credentials}');
                               } else {
-                                devtools.log('its ok');
+                                await showErrorDialog(
+                                    context, 'Error: ${e.code}');
                               }
+                            } catch (e) {
+                              await showErrorDialog(context, e.toString());
                             }
                           },
                           child: const Text('Login')),
                       TextButton(
                           onPressed: () {
                             Navigator.of(context).pushNamedAndRemoveUntil(
-                              '/register/',
+                              registerRoute,
                               (route) => false,
                             );
                           },
