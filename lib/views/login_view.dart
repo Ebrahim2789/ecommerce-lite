@@ -1,10 +1,8 @@
 // import 'dart:ffi';
 
 import 'package:dalell/constants/routes.dart';
-import 'package:dalell/firebase_options.dart';
 import 'package:dalell/utilities/show_error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // import 'dart:developer' as devtools show log;
 
@@ -38,79 +36,71 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     WidgetsFlutterBinding.ensureInitialized;
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Login'),
-          backgroundColor: Colors.blue[500],
-        ),
-        body: FutureBuilder(
-            future: Firebase.initializeApp(
-                options: DefaultFirebaseOptions.currentPlatform),
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.done:
-                  return Column(
-                    children: [
-                      TextField(
-                        decoration: const InputDecoration(
-                            hintText: 'Enter your email here'),
-                        controller: _email,
-                        autocorrect: false,
-                        keyboardType: TextInputType.emailAddress,
-                        enableSuggestions: false,
-                        obscureText: false,
-                      ),
-                      TextField(
-                        decoration: const InputDecoration(
-                            hintText: 'Enter your password here'),
-                        controller: _password,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        obscureText: true,
-                      ),
-                      TextButton(
-                          onPressed: () async {
-                            final email = _email.text;
-                            final password = _password.text;
+      appBar: AppBar(
+        title: const Text('Login'),
+        backgroundColor: Colors.blue[500],
+      ),
+      body: Column(
+        children: [
+          TextField(
+            decoration:
+                const InputDecoration(hintText: 'Enter your email here'),
+            controller: _email,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            enableSuggestions: false,
+            obscureText: false,
+          ),
+          TextField(
+            decoration:
+                const InputDecoration(hintText: 'Enter your password here'),
+            controller: _password,
+            autocorrect: false,
+            enableSuggestions: false,
+            obscureText: true,
+          ),
+          TextButton(
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
 
-                            try {
-                              // final userCredential =
-                              await FirebaseAuth.instance
-                                  .signInWithEmailAndPassword(
-                                      email: email, password: password);
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                mainPageroute,
-                                (route) => false,
-                              );
-                            } on FirebaseAuthException catch (e) {
-                              if (e.code == 'user-not-found') {
-                                await showErrorDialog(
-                                    context, 'user not found');
-                              } else if (e.code == 'wrong-password') {
-                                await showErrorDialog(
-                                    context, 'Wrong credentials}');
-                              } else {
-                                await showErrorDialog(
-                                    context, 'Error: ${e.code}');
-                              }
-                            } catch (e) {
-                              await showErrorDialog(context, e.toString());
-                            }
-                          },
-                          child: const Text('Login')),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              registerRoute,
-                              (route) => false,
-                            );
-                          },
-                          child: const Text("Regiter here")),
-                    ],
+                try {
+                  // final userCredential =
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: email, password: password);
+                  if (!context.mounted) return;
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    mainPageroute,
+                    (route) => false,
                   );
-
-                default:
-                  return const Text('Loding....');
-              }
-            }));
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'user-not-found') {
+                    if (!context.mounted) return;
+                    await showErrorDialog(context, 'user not found');
+                  } else if (e.code == 'wrong-password') {
+                    if (!context.mounted) return;
+                    await showErrorDialog(context, 'Wrong credentials}');
+                  } else {
+                    if (!context.mounted) return;
+                    await showErrorDialog(context, 'Error: ${e.code}');
+                  }
+                } catch (e) {
+                  if (!context.mounted) return;
+                  await showErrorDialog(context, e.toString());
+                }
+              },
+              child: const Text('Login')),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                registerRoute,
+                (route) => false,
+              );
+            },
+            child: const Text("Regiter here"),
+          )
+        ],
+      ),
+    );
   }
 }

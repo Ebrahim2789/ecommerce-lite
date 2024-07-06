@@ -6,22 +6,24 @@ import 'package:dalell/views/verify_email_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
 
 void main() {
   runApp(MaterialApp(
-    title: 'Flutter Demo',
+    title: 'Flutter App',
 
+    // Other app configurations and routes
     theme: ThemeData(useMaterial3: true),
+
     home: const HomePage(),
+
     // initialRoute: '/',
     routes: {
       // When navigating to the "/" route, build the FirstScreen widget.
       loginRoute: (context) => const LoginView(),
       // When navigating to the "/second" route, build the SecondScreen widget.
-       registerRoute: (context) => const RegisterView(),
+      registerRoute: (context) => const RegisterView(),
       mainPageroute: (context) => const MainPage(),
-
+      verifyEmailViewRoute: (context) => const VerifyEmailView(),
     },
   ));
 }
@@ -78,24 +80,22 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   Menu? selectedMenu;
-  String menuBar='Menu';
-    String selectedPage='';
+  String menuBar = 'Menu';
+  String selectedPage = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      //   leading:IconButton(icon: const Icon(Icons.menu),
-      //   tooltip: menuBar,onPressed: ()async{
-      // // final menu=  await DrawerDemo();\
-      //     // Navigator.of(context).pushNamedAndRemoveUntil('/menu/', (route)=>false, );
-   
-      
-      //   },),
+        //   leading:IconButton(icon: const Icon(Icons.menu),
+        //   tooltip: menuBar,onPressed: ()async{
+        // // final menu=  await DrawerDemo();\
+        //     // Navigator.of(context).pushNamedAndRemoveUntil('/menu/', (route)=>false, );
+
+        //   },),
         title: const Text('Main page'),
 
         backgroundColor: Colors.blue[500],
-        
-        
+
         actions: [
           PopupMenuButton<Menu>(
             initialValue: selectedMenu,
@@ -103,14 +103,18 @@ class _MainPageState extends State<MainPage> {
               setState(() {
                 selectedMenu = item;
               });
-              devtools.log(item.toString());
               switch (item) {
                 case Menu.logout:
                   final showlogout = await showLogOutDialog(context);
 
                   if (showlogout) {
                     await FirebaseAuth.instance.signOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (_)=>false, );
+
+                    if (!context.mounted) return;
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      loginRoute,
+                      (_) => false,
+                    );
                   }
                 case Menu.download:
                   break;
@@ -132,8 +136,6 @@ class _MainPageState extends State<MainPage> {
                   child: ListTile(
                       title: Text('Log out'),
                       leading: Icon(Icons.logout_outlined)),
-
-                      
                 ),
                 PopupMenuItem<Menu>(
                   value: Menu.preview,
@@ -159,10 +161,9 @@ class _MainPageState extends State<MainPage> {
                 PopupMenuDivider(),
                 PopupMenuItem<Menu>(
                   value: Menu.remove,
-                  child:  ListTile(
+                  child: ListTile(
                     leading: Icon(Icons.delete_outline),
                     title: Text('Remove'),
-                    
                   ),
                 ),
                 PopupMenuItem<Menu>(
@@ -177,8 +178,7 @@ class _MainPageState extends State<MainPage> {
           )
         ],
       ),
-
-drawer: Drawer(
+      drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -224,8 +224,7 @@ drawer: Drawer(
           ],
         ),
       ),
-
-      body: Text('Page: $selectedPage'),
+      body: Center(child: Text('Page: $selectedPage')),
     );
   }
 }

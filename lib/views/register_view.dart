@@ -1,9 +1,7 @@
 import 'package:dalell/constants/routes.dart';
-import 'package:dalell/firebase_options.dart';
+import 'package:dalell/utilities/show_error_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -36,80 +34,75 @@ class _RegisterViewState extends State<RegisterView> {
     WidgetsFlutterBinding.ensureInitialized();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Register'),
-      backgroundColor: Colors.blue[500],
+      appBar: AppBar(
+        title: const Text('Register'),
+        backgroundColor: Colors.blue[500],
       ),
-      body: FutureBuilder(
-          future: Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform,
+      body: Column(
+        children: [
+          TextField(
+            controller: _email,
+            decoration:
+                const InputDecoration(hintText: 'Enter your email here'),
+            obscureText: false,
+            enableSuggestions: false,
+            keyboardType: TextInputType.emailAddress,
           ),
-          builder: (context, sanpshot) {
-            switch (sanpshot.connectionState) {
-              // case ConnectionState.none:
+          TextField(
+            controller: _password,
+            decoration:
+                const InputDecoration(hintText: 'Enter your password here'),
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+          ),
+          TextButton(
+              onPressed: () async {
+                final email = _email.text;
 
-              //  break;
-              // case ConnectionState.waiting:
-              //  break;
-              // case ConnectionState.active:
-              //   break;
-              case ConnectionState.done:
-                return Column(
-                  children: [
-                    TextField(
-                      controller: _email,
-                      decoration: const InputDecoration(
-                          hintText: 'Enter your email here'),
-                      obscureText: false,
-                      enableSuggestions: false,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    TextField(
-                      controller: _password,
-                      decoration: const InputDecoration(
-                          hintText: 'Enter your password here'),
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                    ),
-                    TextButton(
-                        onPressed: () async {
-                          final email = _email.text;
-                          final password = _password.text;
-                          try {
-                            final userCredential = await FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                                    email: email, password: password);
+                final password = _password.text;
 
-                            devtools.log(userCredential.toString());
+                try {
+                  // final userCredential =
+                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: email, password: password);
 
-                            Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (route)=>false,);
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'weak-password') {
-                              devtools.log('please dont do this weak password');
-                            } else if (e.code == 'email-alreasy-in-use') {
-                              devtools.log('email already in use try agian');
-                            }
-                            // the same for invalid-email
-                            else {
-                              devtools.log(e.code);
-                            }
-                          }
-                        },
-                        child: const Text('Register')),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            loginRoute,
-                            (route) => false,
-                          );
-                        },
-                        child: const Text('Login'))
-                  ],
+                  final user = FirebaseAuth.instance.currentUser;
+                  await user?.sendEmailVerification();
+                  if (!context.mounted) return;
+
+                  Navigator.of(context).pushNamed(verifyEmailViewRoute);
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'weak-password') {
+                    if (!context.mounted) return;
+                    await showErrorDialog(
+                        context, 'please dont do this weak password');
+                  } else if (e.code == 'email-alreasy-in-use') {
+                    if (!context.mounted) return;
+                    await showErrorDialog(
+                        context, 'Email already in use try agian');
+                  }
+                  // the same for invalid-email
+                  else {
+                    if (!context.mounted) return;
+                    await showErrorDialog(context, 'Error:${e.code}');
+                  }
+                } catch (e) {
+                  if (!context.mounted) return;
+                  await showErrorDialog(context, e.toString());
+                }
+              },
+              child: const Text('Register')),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  loginRoute,
+                  (route) => false,
                 );
-              default:
-                return const Text('Loading...');
-            }
-          }),
+              },
+              child: const Text('Login'))
+        ],
+      ),
     );
   }
 }
