@@ -123,6 +123,7 @@ class _MainViewState extends State<MainView> {
               onTap: () {
                 setState(() {
                   selectedPage = 'Messages';
+                  Navigator.of(context).pop();
                 });
               },
             ),
@@ -132,6 +133,7 @@ class _MainViewState extends State<MainView> {
               onTap: () {
                 setState(() {
                   selectedPage = 'Profile';
+                  Navigator.of(context).pop();
                 });
               },
             ),
@@ -141,6 +143,7 @@ class _MainViewState extends State<MainView> {
               onTap: () {
                 setState(() {
                   selectedPage = 'Settings';
+                  Navigator.of(context).pop();
                 });
               },
             ),
