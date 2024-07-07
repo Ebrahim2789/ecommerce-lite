@@ -1,0 +1,7 @@
+unit testings
+
+TDD(test Driven Development)
+its needs to be written before code, not the other way around
+
+Differnet type of test
+unit ,widget and integration
