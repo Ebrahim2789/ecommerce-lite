@@ -1,11 +1,13 @@
 import 'package:dalell/services/auth/auth_provider.dart';
 import 'package:dalell/services/auth/auth_user.dart';
+import 'package:dalell/services/auth/firebase_auth_provider.dart';
 
 class AuthServices implements AuthProvider {
   final AuthProvider provider;
 
-  const AuthServices({required this.provider});
+  const AuthServices(this.provider);
 
+  factory AuthServices.firebase() => AuthServices(FirebaseAuthProvider());
   @override
   Future<AuthUser> createUsre({
     required String email,
@@ -34,4 +36,7 @@ class AuthServices implements AuthProvider {
 
   @override
   Future<void> sendEmailVerification() => provider.sendEmailVerification();
+
+  @override
+  Future<void> initialize() => provider.initialize();
 }

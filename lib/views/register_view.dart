@@ -1,6 +1,7 @@
 import 'package:dalell/constants/routes.dart';
+import 'package:dalell/services/auth/auth_exceptions.dart';
+import 'package:dalell/services/auth/auth_services.dart';
 import 'package:dalell/utilities/show_error_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegisterView extends StatefulWidget {
@@ -63,30 +64,23 @@ class _RegisterViewState extends State<RegisterView> {
                 final password = _password.text;
 
                 try {
-                  // final userCredential =
-                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                      email: email, password: password);
-
-                  final user = FirebaseAuth.instance.currentUser;
-                  await user?.sendEmailVerification();
-                  if (!context.mounted) return;
+                  AuthServices.firebase().createUsre(
+                    email: email,
+                    password: password,
+                  );
+                  AuthServices.firebase().sendEmailVerification();
 
                   Navigator.of(context).pushNamed(verifyEmailViewRoute);
-                } on FirebaseAuthException catch (e) {
-                  if (!context.mounted) return;
-                  if (e.code == 'weak-password') {
-                    await showErrorDialog(
-                        context, 'please dont do this weak password');
-                  } else if (e.code == 'email-alreasy-in-use') {
-                    await showErrorDialog(
-                        context, 'Email already in use try agian');
-                  }
-                  // the same for invalid-email
-                  else {
-                    await showErrorDialog(context, 'Error:${e.code}');
-                  }
-                } catch (e) {
-                  await showErrorDialog(context, e.toString());
+                } on WeakPasswordAuthException {
+                  await showErrorDialog(
+                      context, 'please dont do this weak password');
+                } on EmailAlreadyInUSEAuthException {
+                  await showErrorDialog(
+                      context, 'Email already in use try agian');
+                } on InvalidEmailAuthException {
+                  await showErrorDialog(context, 'Invalid email address');
+                } on GennericAuthException {
+                  await showErrorDialog(context, 'Failed to register');
                 }
               },
               child: const Text('Register')),
