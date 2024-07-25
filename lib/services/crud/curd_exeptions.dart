@@ -1,4 +1,4 @@
-class DatabaseAlreadyExistException implements Exception {}
+class DatabaseAlreadyOpenException implements Exception {}
 
 class UnableToGetDocumentDirectory implements Exception {}
 
