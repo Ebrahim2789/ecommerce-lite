@@ -1,3 +1,5 @@
+import 'package:dalell/services/auth/auth_services.dart';
+import 'package:dalell/services/crud/note_service.dart';
 import 'package:flutter/material.dart';
 
 class NewNoteView extends StatefulWidget {
@@ -8,14 +10,98 @@ class NewNoteView extends StatefulWidget {
 }
 
 class _NewNoteViewState extends State<NewNoteView> {
+  DatabaseNote? _note;
+  late final NoteService _noteService;
+  late final TextEditingController _textController;
+
+  @override
+  void initState() {
+    _noteService = NoteService();
+    _textController = TextEditingController();
+    super.initState();
+  }
+
+  void _textControllerListner() async {
+    final note = _note;
+    if (note == null) {
+      return;
+    }
+    final text = _textController.text;
+    await _noteService.updateNote(
+      note: note,
+      text: text,
+    );
+  }
+
+  void _setupTextControllerListner() {
+    _textController.removeListener(_textControllerListner);
+    _textController.addListener(_textControllerListner);
+  }
+
+  Future<DatabaseNote> createNote() async {
+    final existingNote = _note;
+    if (existingNote != null) {
+      return existingNote;
+    }
+    final currentUser = AuthServices.firebase().currentUser;
+    final email = currentUser?.email;
+    final owner = await _noteService.getUser(email: email.toString());
+    return await _noteService.createNote(owner: owner);
+  }
+
+  void _deleteNoteIfTextIsEmpty() {
+    final note = _note;
+    if (_textController.text.isEmpty && note != null) {
+      _noteService.deleteNote(id: note.id);
+    }
+  }
+
+  void _saveNoteIfTextIsNotEmpty() async {
+    final note = _note;
+    final text = _textController.text;
+    if (note != null) {
+      await _noteService.updateNote(
+        note: note,
+        text: text,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _deleteNoteIfTextIsEmpty();
+    _saveNoteIfTextIsNotEmpty();
+    _textController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Note'),
-        backgroundColor: Colors.blue[500],
-      ),
-      body: const Text("new note is here"),
-    );
+        appBar: AppBar(
+          title: const Text('New Note'),
+          backgroundColor: Colors.blue[500],
+        ),
+        body: FutureBuilder(
+          future: createNote(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                _note = snapshot.data as DatabaseNote;
+                _setupTextControllerListner();
+                return TextField(
+                  controller: _textController,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Start typing your note here .....',
+                  ),
+                );
+
+              default:
+                return const CircularProgressIndicator();
+            }
+          },
+        ));
   }
 }

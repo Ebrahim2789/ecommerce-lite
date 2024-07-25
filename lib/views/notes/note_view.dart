@@ -183,6 +183,7 @@ class _MainViewState extends State<MainView> {
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
+                      case ConnectionState.active:
                         return const Text('Your note will appear here');
                       default:
                         return const CircularProgressIndicator();

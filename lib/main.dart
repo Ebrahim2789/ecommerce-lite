@@ -1,7 +1,7 @@
 import 'package:dalell/constants/routes.dart';
 import 'package:dalell/services/auth/auth_services.dart';
 import 'package:dalell/views/login_view.dart';
-import 'package:dalell/views/notes/main_view.dart';
+import 'package:dalell/views/notes/note_view.dart';
 import 'package:dalell/views/notes/new_notes_view.dart';
 import 'package:dalell/views/register_view.dart';
 import 'package:dalell/views/verify_email_view.dart';
