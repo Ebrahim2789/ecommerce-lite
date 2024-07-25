@@ -1,3 +1,3 @@
 enum MenuAction { logout }
 
-enum Menu { logout, preview, share, getLink, remove, download }
+enum Menu { logout, newNote, share, getLink, remove, preview }
